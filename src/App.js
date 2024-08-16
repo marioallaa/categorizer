@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+// import ReactDOM from "react-dom";
+import { ThemeProvider } from '@mui/material/styles';
+import theme from "./dashboard/comp/theme";
+import { HashRouter as Router, Route, Routes,  } from "react-router-dom";
+import Auth from "./auth/auth";
+import PrivateRoute from "./fire/PrivateRoute";
+import Header from "./dashboard/comp/header";
+import Footer from "./dashboard/comp/footer";
+import { Box } from "@mui/material";
+import Home from "./dashboard/home/home";
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+    <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              
+              <PrivateRoute>
+                <Header />
+
+                  <Home/>
+                  
+              </PrivateRoute>
+            }
+          />
+          <Route path="/authenticate" element={<Auth />} />
+        </Routes>
+    </Router>
+
+    <Footer />
+    </ThemeProvider>
   );
 }
 
