@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Typography, Dialog, Grid, DialogActions, DialogContent, DialogTitle, Button, Paper } from '@mui/material';
+import { Box, Typography, Dialog, Grid, DialogActions, IconButton, DialogContent, DialogTitle, Button, Paper } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import Papa from 'papaparse';
+import CloseIcon from '@mui/icons-material/Close';
+import TableComponent from '../comp/CsvTable';
+import TransformDialog from './transform';
 
 function CsvUploader() {
   const [csvData, setCsvData] = useState(null);
   const [open, setOpen] = useState(false);
+  const [other, setOther] = useState(false);
 
   const onDrop = (acceptedFiles) => {
     // Handle file reading
@@ -21,7 +25,7 @@ function CsvUploader() {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: '.csv', // Only accept CSV files
+    accept: '.csv', 
   });
 
   const handleClose = () => {
@@ -44,7 +48,7 @@ function CsvUploader() {
           Categorizer
         </Typography>
         <Typography variant="body1">
-          Drag & Drop a CSV File to start working.
+          Drag & Drop a CSV File to start working
         </Typography>
         <Paper
           {...getRootProps()}
@@ -55,6 +59,7 @@ function CsvUploader() {
             flexDirection: 'column',
             justifyContent: 'center',
             minHeight: '350px',
+            borderRadius: '8px',
             border: '2px dashed #ccc',
             textAlign: 'center',
             cursor: 'pointer'
@@ -77,39 +82,55 @@ function CsvUploader() {
         </Paper>
       </Box>
 
-      {/* Dialog for displaying CSV data */}
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-        <DialogTitle>CSV File Contents</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={(e, reason) => {
+            if (reason !== 'backdropClick') {
+            handleClose();
+            }
+        }}
+        maxWidth="md"
+        fullWidth
+        disableBackdropClick
+        >
+        <DialogTitle>
+            <IconButton
+            edge="start"
+            color="inherit"
+            onClick={handleClose}
+            aria-label="close"
+            sx={{ position: 'absolute', left: 24, top: 8 }}
+            >
+            <CloseIcon />
+            </IconButton>
+                File Content
+        </DialogTitle>
         <DialogContent>
-          <Box>
+            <Box>
             {csvData && csvData.length > 0 && (
-              <table>
-                <thead>
-                  <tr>
-                    {Object.keys(csvData[0]).map((key) => (
-                      <th key={key}>{key}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {csvData.map((row, index) => (
-                    <tr key={index}>
-                      {Object.values(row).map((value, i) => (
-                        <td key={i}>{value}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                <TableComponent csvData={csvData} />
             )}
-          </Box>
+            </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
+            <Button variant="contained" sx={{borderRadius: '8px'}} onClick={() => {
+                setOther(true)
+                handleClose()
+            }} color="primary">
+            Transform
+            </Button>
         </DialogActions>
-      </Dialog>
+        </Dialog>
+        {csvData ? <>
+
+            <TransformDialog 
+            csvData={csvData}
+            handleClose={() => setOther(false)}
+            open={other}
+            onTransform={(e)=>{console.log(`TRANSFORM: `); console.log(e)}}
+        />
+        
+        </> : <></>}
     </Grid>
   );
 }
