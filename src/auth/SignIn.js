@@ -1,7 +1,7 @@
 import React from "react";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../fire/init.js"; 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom"; 
 
@@ -117,7 +117,6 @@ function SignInForm() {
           {resetPassword ? "Reset Password" : "Sign In"}
         </button>
       </form>
-      <ToastContainer />
     </div>
   );
 }

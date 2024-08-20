@@ -7,8 +7,9 @@ import Auth from "./auth/auth";
 import PrivateRoute from "./fire/PrivateRoute";
 import Header from "./dashboard/comp/header";
 import Footer from "./dashboard/comp/footer";
-import { Box } from "@mui/material";
 import Home from "./dashboard/home/home";
+import { ToastContainer } from "react-toastify";
+import CsvFileViewer from "./dashboard/csv/categorizer";
 
 function App() {
 
@@ -16,21 +17,27 @@ function App() {
     <ThemeProvider theme={theme}>
     <Router>
         <Routes>
-          <Route
-            path="/"
-            element={
-              
+          <Route path="/" element={
               <PrivateRoute>
                 <Header />
-
                   <Home/>
-                  
               </PrivateRoute>
             }
           />
+
+        <Route path="/categorize" element={
+              <PrivateRoute>
+                <Header />
+                  <CsvFileViewer/>
+              </PrivateRoute>
+            }
+          />
+
           <Route path="/authenticate" element={<Auth />} />
         </Routes>
     </Router>
+    
+    <ToastContainer />
 
     <Footer />
     </ThemeProvider>

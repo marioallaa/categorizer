@@ -23,11 +23,6 @@ const TransformDialog = ({ open, handleClose, csvData, onTransform }) => {
   };
 
   const handleTransform = () => {
-    console.log('Column Mapping:', columnMapping);
-    console.log('Categorize Money In:', categorizeMoneyIn);
-    console.log('Categorize Money Out:', categorizeMoneyOut);
-    console.log('Money In Positive:', moneyInPositive);
-    console.log('Money Out Negative:', moneyOutNegative);
     onTransform({ ...columnMapping, categorizeMoneyIn, categorizeMoneyOut, moneyInPositive, moneyOutNegative });
   };
 
@@ -100,7 +95,7 @@ const TransformDialog = ({ open, handleClose, csvData, onTransform }) => {
               </FormControl>
               <FormControlLabel
                 control={<Switch checked={moneyInPositive} onChange={(e) => setMoneyInPositive(e.target.checked)} />}
-                label="Is the transaction value positive?"
+                label="The transaction value is positive."
                 sx={{ }}
               />
             </Box>
@@ -127,7 +122,7 @@ const TransformDialog = ({ open, handleClose, csvData, onTransform }) => {
               </FormControl>
               <FormControlLabel
                 control={<Switch checked={moneyOutNegative} onChange={(e) => setMoneyOutNegative(e.target.checked)} />}
-                label="Is the transaction value negative?"
+                label="The transaction value is negative."
                 sx={{ }}
               />
             </Box>

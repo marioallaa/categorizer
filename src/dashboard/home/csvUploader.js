@@ -5,11 +5,18 @@ import Papa from 'papaparse';
 import CloseIcon from '@mui/icons-material/Close';
 import TableComponent from '../comp/CsvTable';
 import TransformDialog from './transform';
+import { auth, db } from '../../fire/init';
+import { toast } from "react-toastify";
+import { getDoc, updateDoc, doc } from 'firebase/firestore';
+import { useNavigate } from "react-router-dom"; 
+
 
 function CsvUploader() {
   const [csvData, setCsvData] = useState(null);
   const [open, setOpen] = useState(false);
   const [other, setOther] = useState(false);
+
+  const navigate = useNavigate();
 
   const onDrop = (acceptedFiles) => {
     // Handle file reading
@@ -127,12 +134,154 @@ function CsvUploader() {
             csvData={csvData}
             handleClose={() => setOther(false)}
             open={other}
-            onTransform={(e)=>{console.log(`TRANSFORM: `); console.log(e)}}
+            onTransform={async (e)=>  {
+
+              let resp = await sendTransformRequest(csvData, e)
+
+              
+              const errors = resp.errors
+
+
+
+              const transformationId = resp.id 
+
+              if (transformationId) {
+                const userId =  await  auth.currentUser.uid;
+                const userDoc = await getDoc(doc(db, "users", userId))
+                  const userDocRef = doc(db, 'users', userId);
+                try {
+                    if (userDoc.exists()) {
+                      const userData = userDoc.data();
+                      
+                      // Initialize transformationHistory if it does not exist
+                      if (!userData.transformationHistory) {
+                        userData.transformationHistory = [];
+                      }
+                
+                      // Add transformationId to history if not already present
+                      if (!userData.transformationHistory.includes(transformationId)) {
+                        userData.transformationHistory.push(transformationId);
+                      }
+                
+                      // Update the document with the new history
+                      await updateDoc(userDocRef, {
+                        transformationHistory: userData.transformationHistory,
+                      });
+                
+                    } else {
+                      console.log('User document does not exist');
+                    }
+                } catch (error) {
+                  console.error('Error updating transformation history:', error);
+                }
+
+                toast.success(`Transformation was successful ${errors.length > 0 ? `with ${errors.length} errors`: ''}`, {
+                  position: "top-right",
+                  autoClose: 6000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                });
+              
+                
+
+              localStorage.setItem('currentTrId', transformationId)
+              navigate('/categorize')
+
+
+              }
+              
+
+
+
+            }}
         />
         
         </> : <></>}
+        
     </Grid>
   );
+
+
+
+
+
+
+
+  async function sendTransformRequest(csvData, transformRequest,) {
+    const url = 'http://127.0.0.1:5000/transform';
+
+    // Function to convert an array of objects into a CSV string
+    const generateCsvData = (dataArray) => {
+      if (!Array.isArray(dataArray) || dataArray.length === 0) {
+        throw new Error('Invalid data format. Expected a non-empty array of objects.');
+      }
+
+      // Extract headers from the keys of the first object
+      const headers = Object.keys(dataArray[0]);
+
+      // Convert header and data rows to CSV string
+      const csvRows = [
+        headers.join(','), // Header row
+        ...dataArray.map(row => 
+          headers.map(header => `"${row[header] ? row[header].toString().replace(/"/g, '""') : ''}"`).join(',')
+        )
+      ];
+
+      return csvRows.join('\n');
+    };
+
+
+    const fileBlob = new Blob([generateCsvData(csvData)], { type: 'text/csv' });
+    const file = new File([fileBlob], 'input.csv', { type: 'text/csv' });
+    const authToken = await  auth.currentUser.getIdToken()
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('transform_request', JSON.stringify(transformRequest));
+
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: formData
+      });
+      
+      if (!response.ok) {
+        const err = await response.json()
+        toast.error(`We couldn't transform your data, Please make sure you follow the guidelines.`, {
+          position: "top-right",
+          autoClose: 6000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        try {
+        toast.error(`${err.error}`)
+        } catch (error) {
+          console.log(err)
+        }
+        
+      } else {
+        return await response.json();
+      }
+      
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  }
+
+
+
+
 }
 
 export default CsvUploader;

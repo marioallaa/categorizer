@@ -38,16 +38,16 @@ const TableComponent = ({ csvData }) => {
                   </Tooltip>
                 </td>
               ))}
-              {remainingColumns > 0 && (
+              {/* {remainingColumns > 0 && (
                 <td rowSpan={middleRowCount > 0 ? middleRowCount + 1 : 1} style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
                   <strong>+{remainingColumns} columns</strong>
                 </td>
-              )}
+              )} */}
             </tr>
           ))}
           {middleRowCount > 0 && (
             <tr>
-              <td colSpan={first6Keys.length + (remainingColumns > 0 ? 1 : 0)} style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
+              <td colSpan={first6Keys.length } style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
                 <Typography sx={{fontWeight: '100', color: '#636363', fontStyle: 'italic'}}>{middleRowCount} more rows...</Typography>
               </td>
             </tr>
@@ -61,11 +61,11 @@ const TableComponent = ({ csvData }) => {
                   </Tooltip>
                 </td>
               ))}
-              {remainingColumns > 0 && rowIndex === 0 && (
+              {/* {remainingColumns > 0 && rowIndex === 0 && (
                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
                   <strong>+{remainingColumns} columns</strong>
                 </td>
-              )}
+              )} */}
             </tr>
           ))}
         </tbody>
