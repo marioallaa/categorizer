@@ -10,6 +10,7 @@ import Footer from "./dashboard/comp/footer";
 import Home from "./dashboard/home/home";
 import { ToastContainer } from "react-toastify";
 import CsvFileViewer from "./dashboard/csv/categorizer";
+import ExcelMerger from "./dashboard/excel/excel";
 
 function App() {
 
@@ -25,10 +26,18 @@ function App() {
             }
           />
 
-        <Route path="/categorize" element={
+            <Route path="/categorize" element={
               <PrivateRoute>
                 <Header />
                   <CsvFileViewer/>
+              </PrivateRoute>
+            }
+          />
+
+            <Route path="/merge" element={
+              <PrivateRoute>
+                <Header />
+                  <ExcelMerger/>
               </PrivateRoute>
             }
           />

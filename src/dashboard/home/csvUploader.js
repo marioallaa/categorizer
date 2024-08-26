@@ -7,7 +7,7 @@ import TableComponent from '../comp/CsvTable';
 import TransformDialog from './transform';
 import { auth, db } from '../../fire/init';
 import { toast } from "react-toastify";
-import { getDoc, updateDoc, doc } from 'firebase/firestore';
+import { setDoc, updateDoc, doc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom"; 
 
 
@@ -138,41 +138,20 @@ function CsvUploader() {
 
               let resp = await sendTransformRequest(csvData, e)
 
-              
               const errors = resp.errors
-
-
-
               const transformationId = resp.id 
 
               if (transformationId) {
-                const userId =  await  auth.currentUser.uid;
-                const userDoc = await getDoc(doc(db, "users", userId))
+                  const userId = auth.currentUser.uid; // Assuming `auth` is correctly imported from your Firebase setup
                   const userDocRef = doc(db, 'users', userId);
-                try {
-                    if (userDoc.exists()) {
-                      const userData = userDoc.data();
-                      
-                      // Initialize transformationHistory if it does not exist
-                      if (!userData.transformationHistory) {
-                        userData.transformationHistory = [];
-                      }
-                
-                      // Add transformationId to history if not already present
-                      if (!userData.transformationHistory.includes(transformationId)) {
-                        userData.transformationHistory.push(transformationId);
-                      }
-                
-                      // Update the document with the new history
-                      await updateDoc(userDocRef, {
-                        transformationHistory: userData.transformationHistory,
-                      });
-                
-                    } else {
-                      console.log('User document does not exist');
-                    }
-                } catch (error) {
-                  console.error('Error updating transformation history:', error);
+                  try {
+                      const workingPaperDocRef = doc(userDocRef, 'wpf', transformationId);
+                      await setDoc(workingPaperDocRef, {
+                        transformationId: transformationId,
+                      }, { merge: true });
+                  } catch (error) {
+                    console.error('Error updating client working files:', error);
+                  }
                 }
 
                 toast.success(`Transformation was successful ${errors.length > 0 ? `with ${errors.length} errors`: ''}`, {
@@ -184,14 +163,12 @@ function CsvUploader() {
                   draggable: true,
                   progress: undefined,
                 });
-              
-                
+
 
               localStorage.setItem('currentTrId', transformationId)
               navigate('/categorize')
 
 
-              }
               
 
 
@@ -212,8 +189,38 @@ function CsvUploader() {
 
   async function sendTransformRequest(csvData, transformRequest,) {
     const url = 'http://127.0.0.1:5000/transform';
+    
+    // Function to clean and ensure numeric values in "moneyIn" and "moneyOut" columns
+    const cleanMoneyValues = (dataArray, transformRequest) => {
+      const moneyInKey = transformRequest.moneyIn;
+      const moneyOutKey = transformRequest.moneyOut;
 
-    // Function to convert an array of objects into a CSV string
+      return dataArray.map(row => {
+        // Clean "moneyIn" value
+        if (row[moneyInKey]) {
+          row[moneyInKey] = parseFloat(
+            row[moneyInKey]
+              .toString()
+              .replace(/[^0-9.-]+/g, '') // Remove any character that's not a digit, decimal point, or minus sign
+          );
+        }
+
+        // Clean "moneyOut" value
+        if (row[moneyOutKey]) {
+          row[moneyOutKey] = parseFloat(
+            row[moneyOutKey]
+              .toString()
+              .replace(/[^0-9.-]+/g, '') // Remove any character that's not a digit, decimal point, or minus sign
+          );
+        }
+
+        return row;
+      });
+    };
+
+    // Assuming csvData is an array of objects and transformRequest is the transform configuration
+    const cleanedCsvData = cleanMoneyValues(csvData, transformRequest);
+
     const generateCsvData = (dataArray) => {
       if (!Array.isArray(dataArray) || dataArray.length === 0) {
         throw new Error('Invalid data format. Expected a non-empty array of objects.');
@@ -225,7 +232,7 @@ function CsvUploader() {
       // Convert header and data rows to CSV string
       const csvRows = [
         headers.join(','), // Header row
-        ...dataArray.map(row => 
+        ...dataArray.map(row =>
           headers.map(header => `"${row[header] ? row[header].toString().replace(/"/g, '""') : ''}"`).join(',')
         )
       ];
@@ -233,10 +240,9 @@ function CsvUploader() {
       return csvRows.join('\n');
     };
 
-
-    const fileBlob = new Blob([generateCsvData(csvData)], { type: 'text/csv' });
+    const fileBlob = new Blob([generateCsvData(cleanedCsvData)], { type: 'text/csv' });
     const file = new File([fileBlob], 'input.csv', { type: 'text/csv' });
-    const authToken = await  auth.currentUser.getIdToken()
+    const authToken = await auth.currentUser.getIdToken();
     const formData = new FormData();
     formData.append('file', file);
     formData.append('transform_request', JSON.stringify(transformRequest));
