@@ -1,9 +1,12 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
+  shape: {
+    borderRadius: 8, // Apply 16px rounded border to all components
+  },
   palette: {
     primary: {
-      main: '#001aff', // Primary blue color
+      main: '#002EBA', // Primary blue color
     },
     secondary: {
       main: '#6a92ff', // Secondary lighter blue
@@ -27,6 +30,23 @@ const theme = createTheme({
       fontWeight: 100,
       lineHeight: '20px',
       letterSpacing: '0.5px',
+    },
+  },
+  components: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '16px', // Rounded corners for Dialog paper
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          borderRadius: '16px', // Rounded corners for TextField input
+          overflow: 'hidden', // Ensures border radius is applied
+        },
+      },
     },
   },
 });

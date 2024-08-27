@@ -188,7 +188,7 @@ function CsvUploader() {
 
 
   async function sendTransformRequest(csvData, transformRequest,) {
-    const url = 'http://127.0.0.1:5000/transform';
+    const url = 'https://cat.alla.al/transform';
     
     // Function to clean and ensure numeric values in "moneyIn" and "moneyOut" columns
     const cleanMoneyValues = (dataArray, transformRequest) => {

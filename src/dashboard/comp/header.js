@@ -31,13 +31,13 @@ function Header() {
       <Toolbar>
         <Box  sx={{ flexGrow: 20, display: 'flex', justifyContent: 'start' }}>
           <Button>
-            <img style={{height: '50px'}} src='/logo-w.png' />
+            <img style={{height: '50px'}} alt='logo'  onClick={() => handleNavigation('/')} src='/logo-w.png' />
           </Button>
         </Box>
-        <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => handleNavigation('/')}>Dashboard</Button> 
+        {/* <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }}  onClick={() => handleNavigation('/')}>Dashboard</Button>  */}
         {/* <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => handleNavigation('/new')}>New</Button> */}
-        <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => handleNavigation('/settings')}>Settings</Button>
-        <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => handleNavigation('/settings')}>Buy Credits</Button>
+        {/* <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => handleNavigation('/settings')}>Settings</Button> */}
+        {/* <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => handleNavigation('/settings')}>Buy Credits</Button> */}
         <Button variant='text' sx={{ flexGrow: 1, color: '#f4ebd0', fontWeight: 600, letterSpacing: 1.5 }} onClick={() => {auth.signOut(); handleNavigation('/')}}>Sign Out</Button>
         
       </Toolbar>
