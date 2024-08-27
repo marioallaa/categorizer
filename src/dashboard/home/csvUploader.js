@@ -7,8 +7,9 @@ import TableComponent from '../comp/CsvTable';
 import TransformDialog from './transform';
 import { auth, db } from '../../fire/init';
 import { toast } from "react-toastify";
-import { setDoc, updateDoc, doc } from 'firebase/firestore';
+import { setDoc, doc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom"; 
+import { baseUrl } from '../../static';
 
 
 function CsvUploader() {
@@ -79,7 +80,7 @@ function CsvUploader() {
             minHeight: '350px',
             width: '100%'
           }}>
-            <img src="drop.png" style={{height: '300px', width: '400px'}} />
+            <img src="drop.png" alt='drop png ' style={{height: '300px', width: '400px'}} />
           </Box>
           <Typography variant="body2">
             Drop your CSV file here or click to select.
@@ -188,7 +189,7 @@ function CsvUploader() {
 
 
   async function sendTransformRequest(csvData, transformRequest,) {
-    const url = 'https://cat.alla.al/transform';
+    const url = `${baseUrl}/transform`;
     
     // Function to clean and ensure numeric values in "moneyIn" and "moneyOut" columns
     const cleanMoneyValues = (dataArray, transformRequest) => {

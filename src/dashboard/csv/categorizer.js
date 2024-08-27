@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -27,7 +28,6 @@ import BankStatementOverview from './bank-statement-overview';
 import CategorizerButtons from './categorizerButtons';
 import GeneratedCsvFiles from './GeneratedCsvFiles ';
 import { toast } from 'react-toastify';
-import { Form } from 'react-router-dom';
 
 const CsvFileViewer = () => {
   // State management
@@ -90,6 +90,10 @@ const CsvFileViewer = () => {
     });
   }, [csvFiles]);
 
+  const handleUpdate = () => {
+    setUpdate(update + 1);
+  };
+
   useEffect(() => {
     if (transformedData?.F31) {
       const f31 = {
@@ -113,12 +117,12 @@ const CsvFileViewer = () => {
         filename: 'TRAINING_DATA_F31',
         parsedData: transformedData.F31,
       }
-      sendCsvToServer(f31.filename, f31.parsedData, (msg) => {toast.info(msg); setUpdate(update + 1)});
+      sendCsvToServer(f31.filename, f31.parsedData, (msg) => {toast.info(msg); handleUpdate()});
       const f32 = {
         filename: 'TRAINING_DATA_F32',
         parsedData: transformedData.F32
       }
-      sendCsvToServer(f32.filename, f32.parsedData, (msg) => {toast.info(msg); setUpdate(update + 1)});
+      sendCsvToServer(f32.filename, f32.parsedData, (msg) => {toast.info(msg); handleUpdate()});
       
     }
   }, [transformedData]);

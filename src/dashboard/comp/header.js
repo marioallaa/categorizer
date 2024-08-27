@@ -1,6 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box, Icon } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar, Button, Box,  } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../fire/init';
 // import { useAuth } from '../hooks/useAuth'; // Custom hook to manage authentication state
@@ -8,19 +7,9 @@ import { auth } from '../../fire/init';
 function Header() {
   const navigate = useNavigate();
   // const { user, logout } = useAuth(); // Assume this hook provides auth state and logout function
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleNavigation = (path) => {
     navigate(path);
-    handleMenuClose();
   };
 
   return (

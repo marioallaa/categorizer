@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, IconButton, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Typography, Switch } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, IconButton, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Typography, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const TransformDialog = ({ open, handleClose, csvData, onTransform }) => {

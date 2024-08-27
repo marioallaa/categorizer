@@ -1,10 +1,8 @@
 import * as XLSX from 'xlsx';
-
-// utils.js
-
 import { doc, getDoc, collection, query, getDocs, setDoc, where, addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { auth, db } from '../../fire/init'; // Update the path to your Firebase config if needed
 import { toast } from 'react-toastify';
+import { baseUrl } from '../../static';
 
 
 
@@ -103,7 +101,7 @@ export const fetchCsvFiles = async (setCsvFiles,) => {
     console.error('No currentTrId found in localStorage');
     return;
   }
-  const url = `https://cat.alla.al/files/${currentTrId}`;
+  const url = `${baseUrl}/files/${currentTrId}`;
   const authToken = await auth.currentUser.getIdToken();
 
   try {
@@ -193,7 +191,7 @@ export const handleClientSelect = async (clientTemp, clients,purpose, setSelecte
 
 export const handleCategorize = async (method, setUpdate, update) => {
   const uniqueId = localStorage.getItem('currentTrId');
-  const url = `https://cat.alla.al/categorize/${uniqueId}/${method}`;
+  const url = `${baseUrl}/categorize/${uniqueId}/${method}`;
   const authToken = await auth.currentUser.getIdToken();
 
 
@@ -268,7 +266,7 @@ export const saveClient = async (data) => {
 }
 
 export const saveWorkbook = async (file, name, type, setWorkBook) => {
-  const url = 'https://cat.alla.al/upload/excel';
+  const url = `${baseUrl}/upload/excel`;
   
   try {
     const authToken = await auth.currentUser.getIdToken();
@@ -343,7 +341,7 @@ export const sendCsvToServer = async (filename, data, onMessage) => {
 
   try {
     // Send the POST request to the server
-    const response = await fetch(`https://cat.alla.al/files/${uniqueId}/${filename}.csv`, {
+    const response = await fetch(`${baseUrl}/files/${uniqueId}/${filename}.csv`, {
       method: 'POST',
       body: formData,
        headers: {
@@ -387,7 +385,7 @@ export const customCategorizer = async (onMessage, setLoading, setUpdate) => {
 
   try {
     // Send the POST request to the server
-    const response = await fetch(`https://cat.alla.al/custom/${uniqueId}`, {
+    const response = await fetch(`${baseUrl}/custom/${uniqueId}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authToken}`,

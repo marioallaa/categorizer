@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Typography, Dialog, Grid, DialogActions, IconButton, DialogContent, DialogTitle, Button, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Typography, Dialog, Grid, DialogActions, IconButton, DialogContent, DialogTitle, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
-import * as XLSX from 'xlsx';
 import CloseIcon from '@mui/icons-material/Close';
-import { auth, db } from '../../fire/init';
-import { toast } from "react-toastify";
-import { getDoc, updateDoc, doc } from 'firebase/firestore';
-import { useNavigate } from "react-router-dom";
 
 function ExcelUploader() {
   const [open, setOpen] = useState(false);
 
-  const navigate = useNavigate();
 
   const onDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0];
 
-
+    console.log(acceptedFiles);
 
   };
 

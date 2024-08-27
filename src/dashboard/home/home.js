@@ -34,7 +34,6 @@ function Home() {
                 setWpfCount(wpf);
               }
             });
-            console.log('clients', clients)
           }
         }
         
@@ -125,7 +124,7 @@ function Home() {
               {clients.length > 0 ? (
                 clients.map((client, index) => (
                 <Box key={index} sx={{ marginBottom: 2, boxShadow: 3, 
-                  borderRadius: 2, backgroundColor: '#ffffff', padding: 2, borderRadius: 2, boxShadow: 1 , width: '100%'}}>
+                  borderRadius: 2, backgroundColor: '#ffffff', padding: 2, width: '100%'}}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={11}>
                           <Typography variant="h6" fontWeight="bold">
@@ -184,11 +183,11 @@ function Home() {
                 ))
                 ) : (
                   <Box sx={{ boxShadow: 3, 
-                    borderRadius: 2, backgroundColor: '#ffffff', padding: 2, borderRadius: 2, boxShadow: 1 , width: '100%'}}>
+                    borderRadius: 2, backgroundColor: '#ffffff', padding: 2  , width: '100%'}}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={11}>
                           <Typography variant="body2" fontWeight="bold">
-                              Your time-line is empty!
+                              You Currently Do not have any clients
                           </Typography>
                         </Grid>
                     </Grid>

@@ -15,7 +15,7 @@ export default function Auth() {
     "container " + (type === "signUp" ? "right-panel-active" : "");
   return (
     <div className="App">
-      <img src="/logo.png" style={{maxWidth: '500px', paddingTop: '75px', paddingBottom: '25px'}}/>
+      <img src="/logo.png" alt='Categorizer Logo' style={{maxWidth: '500px', paddingTop: '75px', paddingBottom: '25px'}}/>
       <div className={containerClass} id="container">
         <SignUpForm />
         <SignInForm />

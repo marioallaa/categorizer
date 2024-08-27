@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Grid,
   Box,
@@ -107,7 +107,8 @@ return (
                     </FormControl>
                 </Grid>
                 {
-                    !showExcel && hasTrainingData ? 
+                    !showExcel && 
+                    hasTrainingData ? 
                         <Grid item md={12} sx={{display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', marginTop: '16px'}}>
                             <Typography variant="body1" sx={{textAlign: 'center', fontWeight: '100', fontStyle: 'italic'}}>
                                 Click on the Button below to categorize the bank statement using historical data
