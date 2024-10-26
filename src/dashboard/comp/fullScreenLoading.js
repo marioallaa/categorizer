@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Box, LinearProgress } from '@mui/material';
 
-const FullScreenLoader = ({ loading, rows, variant }) => {
+const FullScreenLoader = ({ loading, setLoading, rows }) => {
   const [quote, setQuote] = useState(null);
-  const [row, setRow] = useState(null);
   const [progress, setProgress] = useState(0);
   const [currentBatch, setCurrentBatch] = useState(0);
   const [totalBatches, setTotalBatches] = useState(0);
@@ -34,22 +33,18 @@ const FullScreenLoader = ({ loading, rows, variant }) => {
     };
   }, [loading]);
 
+
+
   useEffect(() => {
+    console.log('rows:', rows);
 
     if (loading) {
       // Reset the batch and progress when loading starts
       setCurrentBatch(0);
       setProgress(0);
-      let r = 500
-      if (variant === 'money_in') 
-        r = rows['in'];
-      
-      if (variant === 'money_out') 
-        r = rows['out'];
-
-      setRow(r);
-      if ( r > 0) {
-        const totalBatches = Math.ceil(r / 10);
+     
+      if ( rows > 0) {
+        const totalBatches = Math.ceil(rows / 10);
         setTotalBatches(totalBatches);
 
         const batchInterval = setInterval(() => {
@@ -57,16 +52,19 @@ const FullScreenLoader = ({ loading, rows, variant }) => {
             const newBatch = prevBatch + 1;
             setProgress((newBatch / totalBatches) * 100);
 
-            if (newBatch >= totalBatches) clearInterval(batchInterval);
+            if (newBatch >= totalBatches) {
+              clearInterval(batchInterval);
+              setLoading(false);
+            }
 
             return newBatch;
           });
-        }, 1000);
+        }, 10000);
 
       }
     }
       
-  }, [loading, rows, variant]);
+  }, [loading, rows, setLoading]);
 
   if (!loading) return null;
 
@@ -128,7 +126,7 @@ const FullScreenLoader = ({ loading, rows, variant }) => {
             {quote && quote.author ? `~ ${quote.author}` : null}
           </Typography>
 
-          {row && row > 0 && (
+          {rows && rows > 0 && (
             <Box sx={{ width: '100%', marginTop: 2 }}>
               <LinearProgress variant="determinate" value={progress} />
               <Typography

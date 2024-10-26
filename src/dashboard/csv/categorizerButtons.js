@@ -1,5 +1,5 @@
 
-import React, { useState, } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { Grid, } from '@mui/material';
 import { handleCategorize } from './util';
 import { Button,
@@ -26,6 +26,8 @@ const CategorizerButtons = ({
 
 
     const [open, setOpen] = useState(false);
+    const [ro, setRo] = useState({money_in: 100, money_out: 500});
+    const [r, setR] = useState({money_in: 100, money_out: 500});
     const [loading, setLoading] = useState(false);
     const [variant, setVariant] = useState('');
     const [extraField, setExtraField] = useState(false);
@@ -38,6 +40,18 @@ const CategorizerButtons = ({
     });
 
 
+    
+    useEffect(() => {
+      if (MoneyOut) {
+        setRo((st) => ({ ...st, money_out: MoneyOut.parsedData.length }));
+      }
+      if (MoneyIn) {
+        setRo((st) => ({ ...st, money_in: MoneyIn.parsedData.length }));
+      }
+
+
+    }, [MoneyIn, MoneyOut ]);
+
   
   
     const handleOpen = () => setOpen(true);
@@ -49,6 +63,9 @@ const CategorizerButtons = ({
       setLoading(false);
     }
 
+
+    console.log('ro:', ro);
+    console.log('rows:', ro[variant]);
   
     const handleChange = (e) => {
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -68,7 +85,7 @@ const CategorizerButtons = ({
           <Button
           fullWidth
             disabled={CatMoneyIn}   
-            onClick={() => {handleOpen(); setVariant('money_in')}}
+            onClick={() => {handleOpen(); setVariant('money_in'); setR(ro.money_in);}}
             variant="outlined"
           >
             Categorize F3-1
@@ -80,7 +97,7 @@ const CategorizerButtons = ({
           <Button
             disabled={CatMoneyOut}
             fullWidth
-            onClick={() => {handleOpen(); setVariant('money_out');}}
+            onClick={() => {handleOpen(); setVariant('money_out'); setR(ro.money_out);}}
             variant="outlined"
           >
             Categorize f3-2
@@ -198,7 +215,7 @@ const CategorizerButtons = ({
     </DialogActions>
   </Dialog>
 
-  <FullScreenLoader loading={loading} rows={rows} variant/>
+  <FullScreenLoader loading={loading} setLoading={setLoading} rows={r}/>
 </>
   );
 };
