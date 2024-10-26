@@ -153,7 +153,7 @@ function Home() {
                                 </Grid>
                                 <Grid item xs={9} sm={10} key={i} direction={'column'}  sx={{display: 'flex', justifyContent: 'center', paddingLeft: '8px'}}>
                                   <Typography variant="body2" sx={{ fontWeight: '800', textAlign: 'start'}}>
-                                      {wpf.title}  · {wpf.purpose}
+                                      {wpf.title} · {wpf.purpose}
                                   </Typography>
                                   <Typography variant="body2" sx={{ fontStyle: 'italic', fontWeight: '200', color: '#002EBA'}}>
                                       Created At {formatDate(wpf.createdAt)}

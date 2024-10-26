@@ -189,7 +189,7 @@ export const handleClientSelect = async (clientTemp, clients,purpose, setSelecte
   }
 };
 
-export const handleCategorize = async (method, setUpdate, update) => {
+export const handleCategorize = async (method, setUpdate, update, formData) => {
   const uniqueId = localStorage.getItem('currentTrId');
   const url = `${baseUrl}/categorize/${uniqueId}/${method}`;
   const authToken = await auth.currentUser.getIdToken();
@@ -201,7 +201,13 @@ export const handleCategorize = async (method, setUpdate, update) => {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ 
+        description: formData.director + ' ' + formData.companyRole + ' ' + formData.employees,
+        suggestedCategory: formData.categorization,
+        customize: formData.extraCustomization,
+       }),
     });
 
     if (!response.ok) {

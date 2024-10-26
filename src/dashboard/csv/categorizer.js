@@ -47,6 +47,7 @@ const CsvFileViewer = () => {
   const [update, setUpdate] = useState(0);
   const [selectedClient, setSelectedClient] = useState(1);
   const [clients, setClients] = useState([]);
+  const [rows, setRows] = useState({in: 0, out: 0});
   const [wpfGoal, setWpfGoal] = useState();
   const [transformedData, setTransformedData] = useState(null);
 
@@ -70,16 +71,18 @@ const CsvFileViewer = () => {
     const MoneyOutFile = csvFiles.find(file => file.filename === 'money_out.csv');
     if (MoneyInFile && MoneyInFile.parsedData?.length > 0) {
       MoneyInFile.parsedData.forEach((row) => {
-        totalMoneyIn += parseFloat(row.total) || 0;
+        totalMoneyIn += parseFloat(row.TOTAL) || 0;
       });
       totalRows += MoneyInFile.parsedData.length;
+      setRows({...rows, in: MoneyInFile.parsedData.length})
     }
 
     if (MoneyOutFile && MoneyOutFile.parsedData?.length > 0) {
       MoneyOutFile.parsedData.forEach((row) => {
-        totalMoneyOut += parseFloat(row.total) || 0;
+        totalMoneyOut += parseFloat(row.TOTAL) || 0;
       });
       totalRows += MoneyOutFile.parsedData.length;
+      setRows({...rows, out: MoneyOutFile.parsedData.length})
     }
 
     setOverview({
@@ -150,6 +153,10 @@ const CsvFileViewer = () => {
               p: 2,
               display: 'flex',
               flexDirection: 'column',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignContent: 'center',
               backgroundColor: '#ffffff',
               borderRadius: 2,
               boxShadow: 3,
@@ -184,6 +191,37 @@ const CsvFileViewer = () => {
 
 
 
+        {/* AI Categorizer Section */}
+        {
+          csvFiles.find(file => file.filename === 'cat_money_in.csv') 
+            && csvFiles.find(file => file.filename === 'cat_money_out.csv') ? null :
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  backgroundColor: '#ffffff',
+                  borderRadius: 2,
+                  boxShadow: 3,
+                }}
+              >
+                <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', fontWeight: '200' }}>
+                  START CATEGORIZING... 
+                </Typography>
+                <CategorizerButtons
+                  csvFiles={csvFiles}
+                  rows={rows}
+                  handleCategorize={handleCategorize}
+                  setUpdate={setUpdate}
+                  update={update}
+                />
+              </Box>
+            </Grid> }
+
+
+
+
         {/* Generated CSV Files Section */}
         <Grid item xs={12} sx={{ marginTop: '24px' }}>
           <GeneratedCsvFiles
@@ -193,32 +231,7 @@ const CsvFileViewer = () => {
           />
         </Grid>
 
-        {/* AI Categorizer Section */}
-        {
-          csvFiles.find(file => file.filename === 'cat_money_in.csv') 
-           && csvFiles.find(file => file.filename === 'cat_money_out.csv') ? null :
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              backgroundColor: '#ffffff',
-              borderRadius: 2,
-              boxShadow: 3,
-            }}
-          >
-            <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', fontWeight: '200' }}>
-              Use General AI Categorizer
-            </Typography>
-            <CategorizerButtons
-              csvFiles={csvFiles}
-              handleCategorize={handleCategorize}
-              setUpdate={setUpdate}
-              update={update}
-            />
-          </Box>
-        </Grid> }
+     
 
       </Grid>
 
@@ -319,15 +332,16 @@ const ClientInfo = ({ assignedClientFile }) => (
   <>
     <Grid item container direction="row" sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
       <Grid item xs={12} direction="column">
-        <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 800 }}>
+        <Typography variant="h4" sx={{ textAlign: 'start', fontWeight: 800 }}>
           {assignedClientFile.name}
         </Typography>
       </Grid>
       <Grid item xs={12} direction="column">
-        <Typography variant="body1" sx={{ textAlign: 'center', fontWeight: '100', fontStyle: 'italic' }}>
+        <Typography variant="body1" sx={{ textAlign: 'start', fontWeight: '100', fontStyle: 'italic' }}>
           {assignedClientFile.type} · {assignedClientFile.industry}
         </Typography>
       </Grid>
+      
     </Grid>
   </>
 );

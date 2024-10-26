@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { Grid, Typography, Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Grid, Typography, Box, LinearProgress } from '@mui/material';
 
-const FullScreenLoader= ({ loading }) => {
-
-
-  const [quote, setQuote] = React.useState();
-
+const FullScreenLoader = ({ loading, rows, variant }) => {
+  const [quote, setQuote] = useState(null);
+  const [row, setRow] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [totalBatches, setTotalBatches] = useState(0);
 
   const fetchQuote = async () => {
     try {
       const response = await fetch('https://api.quotable.io/quotes/random');
       const data = await response.json();
       setQuote(data[0]);
-      console.log(data[0])
     } catch (error) {
       console.error('Error fetching quote:', error);
     }
@@ -23,20 +23,53 @@ const FullScreenLoader= ({ loading }) => {
       fetchQuote();
 
       // Set up an interval to fetch a new quote every minute
-      const intervalId = setInterval(fetchQuote, 60000);
+      const intervalId = setInterval(fetchQuote, 6000);
 
       // Clean up the interval on component unmount
-      return () => {
-        clearInterval(intervalId);
-      };
-      
+      return () => clearInterval(intervalId);
     }
+
     return () => {
       document.body.style.overflow = 'unset';
-    }
+    };
   }, [loading]);
 
+  useEffect(() => {
+
+    if (loading) {
+      // Reset the batch and progress when loading starts
+      setCurrentBatch(0);
+      setProgress(0);
+      let r = 500
+      if (variant === 'money_in') 
+        r = rows['in'];
+      
+      if (variant === 'money_out') 
+        r = rows['out'];
+
+      setRow(r);
+      if ( r > 0) {
+        const totalBatches = Math.ceil(r / 10);
+        setTotalBatches(totalBatches);
+
+        const batchInterval = setInterval(() => {
+          setCurrentBatch((prevBatch) => {
+            const newBatch = prevBatch + 1;
+            setProgress((newBatch / totalBatches) * 100);
+
+            if (newBatch >= totalBatches) clearInterval(batchInterval);
+
+            return newBatch;
+          });
+        }, 1000);
+
+      }
+    }
+      
+  }, [loading, rows, variant]);
+
   if (!loading) return null;
+
   return (
     <Box
       sx={{
@@ -45,15 +78,15 @@ const FullScreenLoader= ({ loading }) => {
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgb(244, 235, 208, 0.4)', 
-        backdropFilter: 'blur(5px)', // Background blur effect
+        backgroundColor: 'rgba(244, 235, 208, 0.4)',
+        backdropFilter: 'blur(5px)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 1300, // Ensure it appears above other content
+        zIndex: 1300,
       }}
     >
-      <Grid container justifyContent="center" sx={{display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center'}} alignItems="center">
+      <Grid container justifyContent="center" alignItems="center">
         <Grid item>
           <Typography
             variant="body1"
@@ -61,41 +94,51 @@ const FullScreenLoader= ({ loading }) => {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
-              alignContent: 'center', 
               alignItems: 'center',
               textAlign: 'center',
               fontWeight: '100',
               fontStyle: 'italic',
             }}
           >
-            Please wait while your data is being processed
-            
-          <img src="/loading.gif" alt="Loading Gif" style={{maxWidth: '350px'}} />
+            Please wait while your transactions are being categorized
+            <img src="/loading.gif" alt="Loading Gif" style={{ maxWidth: '350px' }} />
           </Typography>
-          
+
           <Typography
-              variant="h5"
-              sx={{
-                textAlign: 'center',
-                fontWeight: '800',
-                marginTop: 2,
-              }}
-            >
-             {quote && quote.content ? `"${quote.content}"` : null}
+            variant="h5"
+            sx={{
+              maxWidth: '600px',
+              textAlign: 'center',
+              fontWeight: '800',
+              marginTop: 2,
+            }}
+          >
+            {quote && quote.content ? `"${quote.content}"` : null}
           </Typography>
           <Typography
-              variant="body1"
-              sx={{
-                textAlign: 'center',
-                fontWeight: '100',
-                fontStyle: 'italic',
-                letterSpacing: '2px',
-                marginBottom: 2,
-              }}
-            >
-             {quote && quote.author ? `~ ${quote.author}` : null}
+            variant="body1"
+            sx={{
+              textAlign: 'center',
+              fontWeight: '100',
+              fontStyle: 'italic',
+              letterSpacing: '2px',
+              marginBottom: 2,
+            }}
+          >
+            {quote && quote.author ? `~ ${quote.author}` : null}
           </Typography>
-          
+
+          {row && row > 0 && (
+            <Box sx={{ width: '100%', marginTop: 2 }}>
+              <LinearProgress variant="determinate" value={progress} />
+              <Typography
+                variant="body2"
+                sx={{ textAlign: 'center', marginTop: 1 }}
+              >
+                Categorizing partition {currentBatch} of {totalBatches}
+              </Typography>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Box>

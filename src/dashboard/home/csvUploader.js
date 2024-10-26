@@ -189,7 +189,6 @@ function CsvUploader() {
 
 
   async function sendTransformRequest(csvData, transformRequest,) {
-    const url = `${baseUrl}/transform`;
     
     // Function to clean and ensure numeric values in "moneyIn" and "moneyOut" columns
     const cleanMoneyValues = (dataArray, transformRequest) => {
@@ -250,7 +249,7 @@ function CsvUploader() {
 
     
     try {
-      const response = await fetch(url, {
+      const response = await fetch( `${baseUrl}/transform`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`
